@@ -1,9 +1,14 @@
+CC = gcc
+CFLAGS = -std=c17 -I/usr/include/SDL2
+LDFLAGS = -lSDL2
 
-build:
-	gcc -Wall -Werror -Wextra -pedantic ./src/*.c -lm -o maze `sdl2-config --cflags` `sdl2-config --libs`;
+all: ProyectMaze
 
-run:
-	./maze;
+ProyectMaze: main.o
+    $(CC) -o ProyectMaze main.o $(LDFLAGS)
+
+main.o: main.c
+    $(CC) $(CFLAGS) -c main.c
 
 clean:
-	rm maze;
+    rm -f ProyectMaze main.o
