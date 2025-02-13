@@ -1,34 +1,97 @@
-#include <SDL2/SDL.h>
-#include "raycasting.h"
-#include "map_parser.h"
-#include "player.h"
-#include "rendering.h"
-#include "textures.h"
-#include "enemies.h"
-#include "utils.h"
+#include "../headers/header.h"
 
-int main(int argc, char *argv[]) {
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
-        return 1;
-    }
+bool GameRunning = false;
+int TicksLastFrame;
+player_t player;
 
-    // Load map
-    Map map = load_map("maze.txt");
+/**
+ * setup_game - initialize player variables and load wall textures
+ *
+*/
 
-    // Initialize player
-    Player player = init_player(map.start_x, map.start_y);
+void setup_game(void)
+{
 
-    // Main game loop
-    int running = 1;
-    while (running) {
-        handle_input(&player, &running);
-        update_player(&player, &map);
-        render(&player, &map);
-    }
+	player.x = SCREEN_WIDTH / 2;
+	player.y = SCREEN_HEIGHT / 2;
+	player.width = 1;
+	player.height = 30;
+	player.walkDirection = 0;
+	player.walkSpeed = 100;
+	player.turnDirection = 0;
+	player.turnSpeed = 45 * (PI / 180);
+	player.rotationAngle = PI / 2;
+	WallTexturesready();
+}
 
-    // Clean up
-    SDL_Quit();
-    return 0;
+
+/**
+ * update_game - update_game delta time, the ticks last frame
+ *          the player movement and the ray casting
+ *
+*/
+void update_game(void)
+{
+	float DeltaTime;
+	int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
+
+	if (timeToWait > 0 && timeToWait <= FRAME_TIME_LENGTH)
+	{
+		SDL_Delay(timeToWait);
+	}
+	DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
+
+	TicksLastFrame = SDL_GetTicks();
+
+	movePlayer(DeltaTime);
+	castAllRays();
+}
+
+/**
+ * render - calls all functions needed for on-screen rendering
+ *
+*/
+
+void render_game(void)
+{
+	clearColorBuffer(0xFF000000);
+
+	renderWall();
+
+	renderMap();
+	renderRays();
+	renderPlayer();
+
+	renderColorBuffer();
+}
+
+/**
+ * Destroy - free wall textures and destroy window
+ *
+*/
+void destroy_game(void)
+{
+	freeWallTextures();
+	destroyWindow();
+}
+
+/**
+ * main - main function
+ * Return: 0
+*/
+
+int main(void)
+{
+	GameRunning = initializeWindow();
+
+	setup_game();
+
+	while (GameRunning)
+	{
+		handleInput();
+		update_game();
+		render_game();
+	}
+	destroy_game();
+	return (0);
 }

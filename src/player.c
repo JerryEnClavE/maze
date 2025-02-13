@@ -1,17 +1,40 @@
-#include "player.h"
+#include "../headers/header.h"
 
-Player init_player(float start_x, float start_y) {
-    Player player;
-    player.x = start_x;
-    player.y = start_y;
-    player.angle = 0; // Initial angle
-    return player;
+
+/**
+ * movePlayer - set the next position of the player
+ * @DeltaTime: time elapsed since the last frame
+*/
+
+void movePlayer(float DeltaTime)
+{
+	float moveStep, newPlayerX, newPlayerY;
+
+	player.rotationAngle += player.turnDirection * player.turnSpeed * DeltaTime;
+	moveStep = player.walkDirection * player.walkSpeed * DeltaTime;
+
+	newPlayerX = player.x + cos(player.rotationAngle) * moveStep;
+	newPlayerY = player.y + sin(player.rotationAngle) * moveStep;
+
+	if (!DetectCollision(newPlayerX, newPlayerY))
+	{
+		player.x = newPlayerX;
+		player.y = newPlayerY;
+	}
 }
 
-void handle_input(Player *player, int *running) {
-    // Handle keyboard input for player movement and quitting
-}
+/**
+ * renderPlayer - render the player
+ *
+*/
 
-void update_player(Player *player, Map *map) {
-    // Update player position based on input and collision detection
+void renderPlayer(void)
+{
+	drawRect(
+		player.x * MINIMAP_SCALE_FACTOR,
+		player.y * MINIMAP_SCALE_FACTOR,
+		player.width * MINIMAP_SCALE_FACTOR,
+		player.height * MINIMAP_SCALE_FACTOR,
+		0xFFFFFFFF
+	);
 }
