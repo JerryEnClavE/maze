@@ -1,3 +1,0 @@
-/home/jerry/Proyect-Maze/CMakeFiles/Proyect-Maze.dir
-/home/jerry/Proyect-Maze/CMakeFiles/edit_cache.dir
-/home/jerry/Proyect-Maze/CMakeFiles/rebuild_cache.dir
