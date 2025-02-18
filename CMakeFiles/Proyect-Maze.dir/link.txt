@@ -1,0 +1,1 @@
+/usr/bin/cc "CMakeFiles/Proyect-Maze.dir/main.c.o" -o Proyect-Maze  /usr/lib/x86_64-linux-gnu/libSDL2.so 
