@@ -1,4 +1,5 @@
 #include "../headers/header.h"
+#include <upng.h> 
 
 static const char *textureFileNames[NUM_TEXTURES] = {
 	"./images/redbrick.png",
