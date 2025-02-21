@@ -107,9 +107,9 @@ int main() {
     SDL_Window* window = SDL_CreateWindow("Raycasting con Texturas", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     
-    floor_texture = load_texture(renderer, "floor.png");
-    ceiling_texture = load_texture(renderer, "ceiling.png");
-    wall_texture = load_texture(renderer, "wall.png");
+    floor_texture = load_texture(renderer, "texturas/floor.png");
+    ceiling_texture = load_texture(renderer, "texturas/ceiling.png");
+    wall_texture = load_texture(renderer, "texturas/wall.png");
 
     if (!floor_texture || !ceiling_texture || !wall_texture) {
         printf("Error cargando texturas\n");
