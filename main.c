@@ -45,6 +45,10 @@ SDL_Texture* load_texture(SDL_Renderer* renderer, const char* path) {
     }
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
+    if (texture) {
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        SDL_SetTextureScaleMode(texture, SDL_ScaleModeBest);
+    }
     return texture;
 }
 
@@ -66,13 +70,17 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         float corrected_dist = distance * cos((ray_angle - player->angle) * M_PI / 180);
         int line_height = (TILE_SIZE * SCREEN_HEIGHT) / corrected_dist;
 
+        // Calcular la posición exacta de la textura en la pared
+        int texture_offset_x = (int)(ray_x) % TILE_SIZE;
+        SDL_Rect src_rect = { texture_offset_x, 0, 1, TILE_SIZE };
+        SDL_Rect dst_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
+
         // Renderizar techo
         SDL_Rect ceiling_rect = { i, 0, 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
         SDL_RenderCopy(renderer, ceiling_texture, NULL, &ceiling_rect);
 
-        // Renderizar pared
-        SDL_Rect wall_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
-        SDL_RenderCopy(renderer, wall_texture, NULL, &wall_rect);
+        // Renderizar pared con textura ajustada
+        SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
 
         // Renderizar piso
         SDL_Rect floor_rect = { i, (SCREEN_HEIGHT / 2) + (line_height / 2), 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
@@ -109,7 +117,7 @@ int main() {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
     SDL_Window* window = SDL_CreateWindow("Raycasting con Texturas", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
     floor_texture = load_texture(renderer, "texturas/floor.png");
     ceiling_texture = load_texture(renderer, "texturas/ceiling.png");
