@@ -2,6 +2,10 @@
 #include <math.h>
 #include <stdio.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #define TILE_SIZE 64
 #define FOV 60
 #define NUM_RAYS 800
