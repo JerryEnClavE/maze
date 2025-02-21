@@ -1,19 +1,20 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic `sdl2-config --cflags`
-LDFLAGS = `sdl2-config --libs` -lupng -lm
+CFLAGS = -Wall -Wextra -std=c99
+LDFLAGS = -lSDL2 -lSDL2_image -lm
 
-SOURCES = $(wildcard ./src/*.c)
-OBJECTS = $(SOURCES:.c=.o)
-TARGET = Proyect-Maze
+OBJ = main.o maze_utils.o
 
-all: $(TARGET)
+all: raycaster
 
-$(TARGET): $(OBJECTS)
-	$(CC) -o $@ $^ $(LDFLAGS)
+raycaster: $(OBJ)
+	$(CC) $(OBJ) -o raycaster $(LDFLAGS)
+
+main.o: main.c maze_utils.h
+	$(CC) $(CFLAGS) -c main.c
+
+maze_utils.o: maze_utils.c maze_utils.h
+	$(CC) $(CFLAGS) -c maze_utils.c
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
-
-run: $(TARGET)
-	./$(TARGET)
+	rm -f *.o raycaster
 
