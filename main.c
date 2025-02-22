@@ -1,56 +1,20 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <math.h>
+#include <stdio.h>
+#include "map.h"
+#include "player.h"
+#include "textures.h"
+#include "minimap.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-#include <stdio.h>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define TILE_SIZE 64
 #define FOV 60.0
 #define NUM_RAYS SCREEN_WIDTH
-#define MAP_WIDTH 10
-#define MAP_HEIGHT 10
-
-int map[MAP_HEIGHT][MAP_WIDTH] = {
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-    {1, 0, 1, 0, 1, 0, 1, 0, 1, 1},
-    {1, 0, 1, 0, 0, 0, 1, 0, 1, 1},
-    {1, 0, 0, 0, 1, 0, 0, 0, 1, 1},
-    {1, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-    {1, 1, 0, 0, 1, 0, 1, 0, 1, 1},
-    {1, 0, 0, 0, 0, 0, 1, 0, 1, 1},
-    {1, 0, 0, 1, 1, 0, 0, 0, 1, 1},
-    {1, 1, 0, 1, 1, 1, 0, 1, 1, 1}
-};
-
-typedef struct {
-    float x, y;
-    float angle;
-} Player;
-
-SDL_Texture* floor_texture = NULL;
-SDL_Texture* ceiling_texture = NULL;
-SDL_Texture* wall_texture = NULL;
-
-SDL_Texture* load_texture(SDL_Renderer* renderer, const char* path) {
-    SDL_Surface* surface = IMG_Load(path);
-    if (!surface) {
-        printf("Error loading image %s: %s\n", path, IMG_GetError());
-        return NULL;
-    }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    if (texture) {
-        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-        SDL_SetTextureScaleMode(texture, SDL_ScaleModeBest);
-    }
-    return texture;
-}
 
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     float ray_angle = player->angle - (FOV / 2);
@@ -139,6 +103,7 @@ int main() {
 
         SDL_RenderClear(renderer);
         cast_rays(renderer, &player);
+draw_minimap(renderer, &player);
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
