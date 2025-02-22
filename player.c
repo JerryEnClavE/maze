@@ -4,8 +4,8 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-#include "map.h"
 #include "player.h"
+#include "map.h"
 
 void handle_input(const Uint8* keys, Player* player) {
     float move_speed = 5.0;

@@ -34,19 +34,19 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         float corrected_dist = distance * cos((ray_angle - player->angle) * M_PI / 180);
         int line_height = (TILE_SIZE * SCREEN_HEIGHT) / corrected_dist;
 
-        // Calcular la posición exacta de la textura en la pared
+        // Calculate the exact position of the texture on the wall
         int texture_offset_x = (int)(ray_x) % TILE_SIZE;
         SDL_Rect src_rect = { texture_offset_x, 0, 1, TILE_SIZE };
         SDL_Rect dst_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
 
-        // Renderizar techo
+        // Render ceiling
         SDL_Rect ceiling_rect = { i, 0, 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
         SDL_RenderCopy(renderer, ceiling_texture, NULL, &ceiling_rect);
 
-        // Renderizar pared con textura ajustada
+        // Render wall with adjusted texture
         SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
 
-        // Renderizar piso
+        // Render floor
         SDL_Rect floor_rect = { i, (SCREEN_HEIGHT / 2) + (line_height / 2), 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
         SDL_RenderCopy(renderer, floor_texture, NULL, &floor_rect);
 
@@ -84,11 +84,20 @@ int main() {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
     floor_texture = load_texture(renderer, "textures/floor.png");
-    ceiling_texture = load_texture(renderer, "textures/ceiling.png");
-    wall_texture = load_texture(renderer, "textures/wall.png");
+    if (!floor_texture) {
+        printf("Failed to load floor texture\n");
+        return 1;
+    }
 
-    if (!floor_texture || !ceiling_texture || !wall_texture) {
-        printf("Error loading textures\n");
+    ceiling_texture = load_texture(renderer, "textures/ceiling.png");
+    if (!ceiling_texture) {
+        printf("Failed to load ceiling texture\n");
+        return 1;
+    }
+
+    wall_texture = load_texture(renderer, "textures/wall.png");
+    if (!wall_texture) {
+        printf("Failed to load wall texture\n");
         return 1;
     }
 
@@ -103,7 +112,7 @@ int main() {
 
         SDL_RenderClear(renderer);
         cast_rays(renderer, &player);
-draw_minimap(renderer, &player);
+        draw_minimap(renderer, &player);
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
