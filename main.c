@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    SDL_Window *win = SDL_CreateWindow("Mapa 2D con Jugador", 100, 100, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window *win = SDL_CreateWindow("Mapa 2D con Jugador", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     if (win == NULL) {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -39,6 +39,26 @@ int main(int argc, char* argv[]) {
     SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
     SDL_Rect player = { player_x * CELL_SIZE, player_y * CELL_SIZE, CELL_SIZE, CELL_SIZE };
     SDL_RenderFillRect(ren, &player);
+
+    // Dibujar paredes como celdas negras
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+    for (int i = 0; i < MAP_SIZE; ++i) {
+        // Pared superior
+        SDL_Rect wall_top = { i * CELL_SIZE, 0, CELL_SIZE, CELL_SIZE };
+        SDL_RenderFillRect(ren, &wall_top);
+
+        // Pared inferior
+        SDL_Rect wall_bottom = { i * CELL_SIZE, (MAP_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE };
+        SDL_RenderFillRect(ren, &wall_bottom);
+
+        // Pared izquierda
+        SDL_Rect wall_left = { 0, i * CELL_SIZE, CELL_SIZE, CELL_SIZE };
+        SDL_RenderFillRect(ren, &wall_left);
+
+        // Pared derecha
+        SDL_Rect wall_right = { (MAP_SIZE - 1) * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE };
+        SDL_RenderFillRect(ren, &wall_right);
+    }
 
     // Mostrar el mapa
     SDL_RenderPresent(ren);
