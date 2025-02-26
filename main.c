@@ -10,7 +10,7 @@
 #define WIDTH 800
 #define HEIGHT 600
 #define TILE_SIZE 50
-#define FOV (M_PI / 3)
+#define FOV (M_PI / 2) // Ajusta el campo de visión a 90 grados
 #define NUM_RAYS 120
 #define MAX_DEPTH 800
 
@@ -52,21 +52,20 @@ void cast_rays() {
 }
 
 void move_player(const Uint8* keys) {
-    double speed = 3;
+    double move_speed = 5; // Ajusta la velocidad de movimiento
+    double rot_speed = 0.1; // Ajusta la sensibilidad de rotación
+
     if (keys[SDL_SCANCODE_W]) {
-        player_x += speed * cos(player_angle);
-        player_y += speed * sin(player_angle);
+        player_x += move_speed * cos(player_angle);
+        player_y += move_speed * sin(player_angle);
     }
     if (keys[SDL_SCANCODE_S]) {
-        player_x -= speed * cos(player_angle);
-        player_y -= speed * sin(player_angle);
+        player_x -= move_speed * cos(player_angle);
+        player_y -= move_speed * sin(player_angle);
     }
-    if (keys[SDL_SCANCODE_A]) player_angle -= 0.05;
-    if (keys[SDL_SCANCODE_D]) player_angle += 0.05;
+    if (keys[SDL_SCANCODE_A]) player_angle -= rot_speed;
+    if (keys[SDL_SCANCODE_D]) player_angle += rot_speed;
 }
-
-void cast_rays();
-void move_player(const Uint8* keys);
 
 int main() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
