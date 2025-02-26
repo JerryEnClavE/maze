@@ -13,6 +13,7 @@
 #define FOV (M_PI / 2) // Ajusta el campo de visión a 90 grados
 #define NUM_RAYS 120
 #define MAX_DEPTH 800
+#define MINIMAP_SCALE 0.2
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -69,9 +70,38 @@ void move_player(const Uint8* keys) {
     if (keys[SDL_SCANCODE_A]) player_angle -= rot_speed;
     if (keys[SDL_SCANCODE_D]) player_angle += rot_speed;
 
-    // Interpolación lineal para un movimiento más suave
-    player_x = player_x + (new_x - player_x) * 0.1;
-    player_y = player_y + (new_y - player_y) * 0.1;
+    // Verificación de colisión
+    int map_x = (int)(new_x / TILE_SIZE);
+    int map_y = (int)(new_y / TILE_SIZE);
+    if (world_map[map_y][map_x] == 0) {
+        // Interpolación lineal para un movimiento más suave
+        player_x = player_x + (new_x - player_x) * 0.1;
+        player_y = player_y + (new_y - player_y) * 0.1;
+    }
+}
+
+void draw_minimap() {
+    int minimap_tile_size = TILE_SIZE * MINIMAP_SCALE;
+    for (int y = 0; y < 10; y++) {
+        for (int x = 0; x < 10; x++) {
+            if (world_map[y][x] == 1) {
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            } else {
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            }
+            SDL_Rect tile_rect = {x * minimap_tile_size, y * minimap_tile_size, minimap_tile_size, minimap_tile_size};
+            SDL_RenderFillRect(renderer, &tile_rect);
+        }
+    }
+
+    // Dibujar al jugador en el minimapa
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_Rect player_rect = {
+        (int)(player_x * MINIMAP_SCALE) - 2,
+        (int)(player_y * MINIMAP_SCALE) - 2,
+        4, 4
+    };
+    SDL_RenderFillRect(renderer, &player_rect);
 }
 
 int main() {
@@ -107,6 +137,7 @@ int main() {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         cast_rays();
+        draw_minimap();
         SDL_RenderPresent(renderer);
     }
 
