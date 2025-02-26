@@ -9,7 +9,7 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define TILE_SIZE 50
+#define TILE_SIZE 64
 #define FOV (M_PI / 2) // Ajusta el campo de visión a 90 grados
 #define NUM_RAYS 120
 #define MAX_DEPTH 800
@@ -17,7 +17,9 @@
 
 SDL_Window* window;
 SDL_Renderer* renderer;
-double player_x = 150, player_y = 150, player_angle = 0;
+double player_x = WIDTH / 2;
+double player_y = HEIGHT / 2;
+double player_angle = 0;
 
 int world_map[10][10] = {
     {1,1,1,1,1,1,1,1,1,1},
@@ -48,8 +50,8 @@ void cast_rays() {
                 SDL_RenderDrawLine(renderer, ray * (WIDTH / NUM_RAYS), (HEIGHT / 2) - (proj_height / 2), ray * (WIDTH / NUM_RAYS), (HEIGHT / 2) + (proj_height / 2));
                 break;
             }
-        }
-    }
+        }   
+    }       
 }
 
 void move_player(const Uint8* keys) {
@@ -80,7 +82,7 @@ void move_player(const Uint8* keys) {
     }
 }
 
-void draw_minimap() {
+void draw_minimap(SDL_Renderer* renderer) {
     int minimap_tile_size = TILE_SIZE * MINIMAP_SCALE;
     for (int y = 0; y < 10; y++) {
         for (int x = 0; x < 10; x++) {
@@ -110,34 +112,37 @@ int main() {
         return 1;
     }
 
-    window = SDL_CreateWindow("Raycasting", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Raycasting", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
         printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    bool quit = false;
-    SDL_Event e;
+    bool running = true;
+    SDL_Event event;
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-    while (!quit) {
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) {
-                quit = true;
+    while (running) {
+        while (SDL_PollEvent(&event) != 0) {
+            if (event.type == SDL_QUIT) {
+                running = false;
             }
         }
 
         move_player(keys);
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+
         cast_rays();
-        draw_minimap();
+        draw_minimap(renderer);
+
         SDL_RenderPresent(renderer);
     }
 
