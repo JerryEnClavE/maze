@@ -52,19 +52,26 @@ void cast_rays() {
 }
 
 void move_player(const Uint8* keys) {
-    double move_speed = 5; // Ajusta la velocidad de movimiento
-    double rot_speed = 0.1; // Ajusta la sensibilidad de rotación
+    double move_speed = 10; // Ajusta la velocidad de movimiento
+    double rot_speed = 0.2; // Ajusta la sensibilidad de rotación
+
+    double new_x = player_x;
+    double new_y = player_y;
 
     if (keys[SDL_SCANCODE_W]) {
-        player_x += move_speed * cos(player_angle);
-        player_y += move_speed * sin(player_angle);
+        new_x += move_speed * cos(player_angle);
+        new_y += move_speed * sin(player_angle);
     }
     if (keys[SDL_SCANCODE_S]) {
-        player_x -= move_speed * cos(player_angle);
-        player_y -= move_speed * sin(player_angle);
+        new_x -= move_speed * cos(player_angle);
+        new_y -= move_speed * sin(player_angle);
     }
     if (keys[SDL_SCANCODE_A]) player_angle -= rot_speed;
     if (keys[SDL_SCANCODE_D]) player_angle += rot_speed;
+
+    // Interpolación lineal para un movimiento más suave
+    player_x = player_x + (new_x - player_x) * 0.1;
+    player_y = player_y + (new_y - player_y) * 0.1;
 }
 
 int main() {
