@@ -1,73 +1,98 @@
-#include <SDL2/SDL.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <SDL2/SDL.h>
 
-#define WIDTH 800
-#define HEIGHT 800
-#define MAP_SIZE 100
-#define CELL_SIZE (WIDTH / MAP_SIZE)
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+#define MAP_WIDTH 24
+#define MAP_HEIGHT 24
 
-int main(int argc, char* argv[]) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        printf("SDL_Init Error: %s\n", SDL_GetError());
+int worldMap[MAP_WIDTH][MAP_HEIGHT] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+};
+
+void drawMap(SDL_Renderer *renderer) {
+    for (int x = 0; x < MAP_WIDTH; x++) {
+        for (int y = 0; y < MAP_HEIGHT; y++) {
+            if (worldMap[x][y] == 1) {
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            } else {
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            }
+            SDL_Rect rect = { x * 20, y * 20, 20, 20 };
+            SDL_RenderFillRect(renderer, &rect);
+        }
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        fprintf(stderr, "Could not initialize SDL: %s\n", SDL_GetError());
         return 1;
     }
 
-    SDL_Window *win = SDL_CreateWindow("Mapa 2D con Jugador", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-    if (win == NULL) {
-        printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
+    SDL_Window *window = SDL_CreateWindow("2D Raycasting Maze",
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SCREEN_WIDTH, SCREEN_HEIGHT,
+                                          SDL_WINDOW_SHOWN);
+    if (!window) {
+        fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
         SDL_Quit();
         return 1;
     }
 
-    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (ren == NULL) {
-        SDL_DestroyWindow(win);
-        printf("SDL_CreateRenderer Error: %s\n", SDL_GetError());
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if (!renderer) {
+        fprintf(stderr, "Could not create renderer: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
     }
 
-    // Limpiar la pantalla con color blanco
-    SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-    SDL_RenderClear(ren);
+    int running = 1;
+    SDL_Event event;
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = 0;
+            }
+        }
 
-    // Coordenadas del jugador
-    int player_x = 50;
-    int player_y = 50;
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
 
-    // Dibujar el jugador como un punto rojo
-    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-    SDL_Rect player = { player_x * CELL_SIZE, player_y * CELL_SIZE, CELL_SIZE, CELL_SIZE };
-    SDL_RenderFillRect(ren, &player);
+        drawMap(renderer);
 
-    // Dibujar paredes como celdas negras
-    SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-    for (int i = 0; i < MAP_SIZE; ++i) {
-        // Pared superior
-        SDL_Rect wall_top = { i * CELL_SIZE, 0, CELL_SIZE, CELL_SIZE };
-        SDL_RenderFillRect(ren, &wall_top);
-
-        // Pared inferior
-        SDL_Rect wall_bottom = { i * CELL_SIZE, (MAP_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE };
-        SDL_RenderFillRect(ren, &wall_bottom);
-
-        // Pared izquierda
-        SDL_Rect wall_left = { 0, i * CELL_SIZE, CELL_SIZE, CELL_SIZE };
-        SDL_RenderFillRect(ren, &wall_left);
-
-        // Pared derecha
-        SDL_Rect wall_right = { (MAP_SIZE - 1) * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE };
-        SDL_RenderFillRect(ren, &wall_right);
+        SDL_RenderPresent(renderer);
     }
 
-    // Mostrar el mapa
-    SDL_RenderPresent(ren);
-
-    // Esperar 5 segundos antes de salir
-    SDL_Delay(5000);
-
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
     SDL_Quit();
 
     return 0;
