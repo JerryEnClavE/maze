@@ -1,6 +1,14 @@
 #include <SDL2/SDL.h>
 #include "raycasting.h"
 
+// Define the Ray structure
+typedef struct {
+    float x;
+    float y;
+    float angle;
+    float distance;
+} Ray;
+
 /**
  * cast_ray - Casts a ray from the player's position to determine wall intersections.
  * @player_x: The x-coordinate of the player's position.
@@ -42,14 +50,4 @@ void draw_walls(SDL_Renderer *renderer, Ray *rays, int num_rays)
 void initialize_raycasting(int **map, int map_width, int map_height)
 {
     // Initialization logic for raycasting
-    // This function will be implemented in detail later
-}
-
-/**
- * cleanup_raycasting - Cleans up resources used in raycasting.
- */
-void cleanup_raycasting(void)
-{
-    // Cleanup logic for raycasting resources
-    // This function will be implemented in detail later
 }
