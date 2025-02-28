@@ -1,7 +1,5 @@
+#include "map.h"
 #include <stdio.h>
-
-#define MAP_WIDTH 10
-#define MAP_HEIGHT 10
 
 int map[MAP_WIDTH][MAP_HEIGHT] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
