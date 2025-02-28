@@ -1,0 +1,10 @@
+##########
+# This is the map layout for the maze project.
+# '1' represents a wall, and '0' represents an open space.
+##########
+
+111111111111111
+100000000000001
+101111111111101
+100000000000001
+111111111111111
