@@ -5,6 +5,7 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+#define TILE_SIZE 60
 
 void init_SDL(SDL_Window **window, SDL_Renderer **renderer) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -34,6 +35,18 @@ void cleanup(SDL_Window *window, SDL_Renderer *renderer) {
     SDL_Quit();
 }
 
+void render_map(SDL_Renderer *renderer) {
+    for (int y = 0; y < MAP_HEIGHT; y++) {
+        for (int x = 0; x < MAP_WIDTH; x++) {
+            if (map[y][x] == 1) {
+                SDL_Rect rect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Color blanco para las paredes
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        }
+    }
+}
+
 int main() {
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
@@ -52,6 +65,8 @@ int main() {
         
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+        
+        render_map(renderer);
         
         SDL_RenderPresent(renderer);
     }
