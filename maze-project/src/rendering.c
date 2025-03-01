@@ -1,6 +1,10 @@
 #include <SDL2/SDL.h>
 #include "rendering.h"
 
+// Define screen dimensions
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
 /**
  * draw_wall - Draws a wall on the screen.
  * @renderer: The SDL_Renderer used for rendering.

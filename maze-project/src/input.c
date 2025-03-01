@@ -1,5 +1,11 @@
 #include <SDL2/SDL.h>
+#include <math.h> // Include math.h for M_PI
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 #include "input.h"
+#include "camera.h" // Include the header file where Camera is defined
 
 /**
  * handle_input - Handles user input for camera movement and rotation.
@@ -8,6 +14,9 @@
  */
 void handle_input(SDL_Event *event, Camera *camera)
 {
+    // Ejemplo de uso de M_PI
+    float angle = M_PI / 4; // 45 grados en radianes
+
     while (SDL_PollEvent(event))
     {
         if (event->type == SDL_QUIT)

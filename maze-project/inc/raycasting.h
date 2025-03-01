@@ -2,9 +2,19 @@
 #define RAYCASTING_H
 
 #include <SDL2/SDL.h>
+#include <stdio.h>
+#include "raycasting.h"
+#include "rendering.h"
+#include "input.h"
+#include "map.h"
+
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 
 // Structure to represent a ray
-typedef struct s_ray {
+typedef struct {
+    float x;
+    float y;
     float angle;      // Angle of the ray
     float distance;   // Distance to the wall
     int wallHit;      // Indicates if a wall was hit

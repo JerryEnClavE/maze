@@ -1,12 +1,22 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include "raycasting.h"
+
+// Define the Ray structure
+typedef struct {
+    float x;
+    float y;
+    float angle;
+    float distance;
+} Ray;
 #include "rendering.h"
 #include "input.h"
 #include "map.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+
+void cast_rays(SDL_Renderer *renderer, float player_x, float player_y, float angle, int **map, int map_width, int map_height, Ray *rays, int num_rays);
 
 int main(void)
 {
@@ -42,6 +52,15 @@ int main(void)
         return 1;
     }
 
+    // Define other necessary variables
+    float player_x = 0.0f, player_y = 0.0f, angle = 0.0f;
+    int **map = NULL; // Initialize your map appropriately
+    int map_width = 0, map_height = 0; // Set your map dimensions
+    Ray *rays = NULL; // Initialize your rays array appropriately
+    int num_rays = 0; // Set the number of rays
+    int *walls = NULL; // Initialize your walls array appropriately
+    int num_walls = 0; // Set the number of walls
+
     // Main game loop
     while (running)
     {
@@ -58,8 +77,8 @@ int main(void)
         SDL_RenderClear(renderer);
 
         // Perform raycasting and rendering
-        cast_rays(renderer);
-        render_scene(renderer);
+        cast_rays(renderer, player_x, player_y, angle, map, map_width, map_height, rays, num_rays);
+        render_scene(renderer, walls, num_walls);
 
         // Present the back buffer
         SDL_RenderPresent(renderer);
