@@ -5,7 +5,7 @@ The Maze Project is a 3D game developed using raycasting techniques. The game al
 
 ## Project Structure
 ```
-maze-project
+maze
 ├── src
 │   ├── main.c          # Entry point of the application
 │   ├── raycasting.c    # Raycasting logic and wall rendering
