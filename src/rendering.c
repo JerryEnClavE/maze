@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include "rendering.h"
+#include "../inc/rendering.h"
 
 // Define screen dimensions
 #define SCREEN_WIDTH 800
