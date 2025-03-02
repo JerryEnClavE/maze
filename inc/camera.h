@@ -10,6 +10,6 @@ typedef struct {
     Position pos;
     float angle;
     float speed;
-} Camera;
+} camera;
 
 #endif // CAMERA_H

@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include "raycasting.h"
+#include "../inc/raycasting.h"
 
 // Define the Ray structure
 typedef struct {

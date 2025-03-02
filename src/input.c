@@ -4,15 +4,16 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-#include "input.h"
-#include "camera.h" // Include the header file where Camera is defined
+
+#include "../inc/input.h"
+#include "../inc/camera.h"
 
 /**
  * handle_input - Handles user input for camera movement and rotation.
  * @event: Pointer to the SDL_Event structure containing event data.
  * @camera: Pointer to the camera structure to update its position and angle.
  */
-void handle_input(SDL_Event *event, Camera *camera)
+void handle_input(SDL_Event *event, camera *camera)
 {
     // Ejemplo de uso de M_PI
     float angle = M_PI / 4; // 45 grados en radianes

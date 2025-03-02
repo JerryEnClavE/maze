@@ -1,6 +1,16 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
-#include "raycasting.h"
+#include "../inc/raycasting.h"
+
+// Define the camera structure
+typedef struct {
+    struct {
+        float x;
+        float y;
+    } pos;
+    float angle;
+    float speed;
+} camera;
 
 // Define the Ray structure
 typedef struct {
@@ -9,9 +19,9 @@ typedef struct {
     float angle;
     float distance;
 } Ray;
-#include "rendering.h"
-#include "input.h"
-#include "map.h"
+#include "../inc/rendering.h"
+#include "../inc/input.h"
+#include "../inc/branches.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -61,6 +71,8 @@ int main(void)
     int *walls = NULL; // Initialize your walls array appropriately
     int num_walls = 0; // Set the number of walls
 
+    camera camera = {{player_x, player_y}, angle, 5.0f}; // Initialize the camera
+
     // Main game loop
     while (running)
     {
@@ -69,7 +81,7 @@ int main(void)
         {
             if (event.type == SDL_QUIT)
                 running = 0;
-            handle_input(event);
+            handle_input(&event, &camera);
         }
 
         // Clear the screen
@@ -77,7 +89,7 @@ int main(void)
         SDL_RenderClear(renderer);
 
         // Perform raycasting and rendering
-        cast_rays(renderer, player_x, player_y, angle, map, map_width, map_height, rays, num_rays);
+        cast_rays(renderer, camera.pos.x, camera.pos.y, camera.angle, map, map_width, map_height, rays, num_rays);
         render_scene(renderer, walls, num_walls);
 
         // Present the back buffer

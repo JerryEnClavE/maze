@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "map.h"
+#include "../inc/map.h"
 
 /**
  * load_map - Loads the map from a specified file.
