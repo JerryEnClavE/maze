@@ -1,8 +1,8 @@
 # Variables
-CC = gcc
-CFLAGS = -I../include -Wall -g
+CC = g++
+CFLAGS = -Iinc -Wall -g
 LDFLAGS = -lSDL2
-SRC = src/input.c src/other_source_files.c
+SRC = src/main.c src/input.c src/other_source_files.c
 OBJ = $(SRC:.c=.o)
 TARGET = maze
 
