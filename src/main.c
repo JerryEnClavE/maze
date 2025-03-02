@@ -1,6 +1,9 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include "../inc/raycasting.h"
+#include "../inc/rendering.h"
+#include "../inc/input.h"
+#include "../inc/branches.h"
 
 // Define the camera structure
 typedef struct {
@@ -19,9 +22,6 @@ typedef struct {
     float angle;
     float distance;
 } Ray;
-#include "../inc/rendering.h"
-#include "../inc/input.h"
-#include "../inc/branches.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
