@@ -8,6 +8,10 @@
 #include "../inc/input.h"
 #include "../inc/camera.h"
 
+#include "input.h"
+#include "rendering.h"
+
+
 /**
  * handle_input - Handles user input for camera movement and rotation.
  * @event: Pointer to the SDL_Event structure containing event data.
@@ -15,25 +19,24 @@
  */
 void handle_input(SDL_Event *event, camera *camera)
 {
-    // Ejemplo de uso de M_PI
-    float angle = M_PI / 4; // 45 grados en radianes
-
+    // Process all events in the queue
     while (SDL_PollEvent(event))
     {
         if (event->type == SDL_QUIT)
         {
-            // Handle quit event
+            // Handle quit event (exit the application)
             exit(0);
         }
         if (event->type == SDL_KEYDOWN)
         {
+            // Handling camera movement and rotation based on key press
             switch (event->key.keysym.sym)
             {
                 case SDLK_LEFT:
-                    camera->angle -= 5; // Rotate left
+                    camera->angle -= 5; // Rotate left (counterclockwise)
                     break;
                 case SDLK_RIGHT:
-                    camera->angle += 5; // Rotate right
+                    camera->angle += 5; // Rotate right (clockwise)
                     break;
                 case SDLK_w:
                     camera->pos.x += cos(camera->angle * M_PI / 180) * camera->speed; // Move forward
@@ -44,11 +47,11 @@ void handle_input(SDL_Event *event, camera *camera)
                     camera->pos.y -= sin(camera->angle * M_PI / 180) * camera->speed;
                     break;
                 case SDLK_a:
-                    camera->pos.x -= cos((camera->angle + 90) * M_PI / 180) * camera->speed; // Move left
+                    camera->pos.x -= cos((camera->angle + 90) * M_PI / 180) * camera->speed; // Move left (strafe)
                     camera->pos.y -= sin((camera->angle + 90) * M_PI / 180) * camera->speed;
                     break;
                 case SDLK_d:
-                    camera->pos.x += cos((camera->angle + 90) * M_PI / 180) * camera->speed; // Move right
+                    camera->pos.x += cos((camera->angle + 90) * M_PI / 180) * camera->speed; // Move right (strafe)
                     camera->pos.y += sin((camera->angle + 90) * M_PI / 180) * camera->speed;
                     break;
             }

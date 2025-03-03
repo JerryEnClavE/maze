@@ -19,4 +19,6 @@ int load_textures(SDL_Renderer *renderer);
 // Function to free textures
 void free_textures();
 
+typedef Ray t_ray;
+
 #endif // RENDERING_H

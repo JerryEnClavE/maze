@@ -18,22 +18,21 @@ void init_map(t_map *map);
 
 /**
  * Loads a map from a specified file.
- * @param map Pointer to the map structure to load data into.
  * @param filename The path to the map file.
- * @return 1 on success, 0 on failure.
+ * @return A pointer to the loaded map, or NULL on failure.
  */
-int load_map(t_map *map, const char *filename);
+char **load_map(const char *filename);
 
 /**
  * Frees any resources associated with the map.
  * @param map Pointer to the map structure to free.
  */
-void free_map(t_map *map);
+void free_map(char **map, size_t line_count);
 
 /**
  * Prints the map layout to the console for debugging purposes.
  * @param map Pointer to the map structure to print.
  */
-void print_map(const t_map *map);
+void print_map(char **map, size_t line_count);
 
 #endif /* MAP_H */

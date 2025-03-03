@@ -16,4 +16,9 @@ void init_input(void);
 // Function to clean up input resources
 void cleanup_input(void);
 
+void handle_input(SDL_Event *event, camera *camera);
+
+void render_scene(SDL_Renderer *renderer, int *walls, int num_walls);
+
+
 #endif // INPUT_H
