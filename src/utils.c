@@ -8,7 +8,8 @@
  * Return: Pointer to the allocated memory, or NULL if allocation fails.
  */
 void *allocate_memory(size_t size, size_t element_size);
-{
+
+ {
     void *ptr = malloc(size);
     if (ptr == NULL)
     {
