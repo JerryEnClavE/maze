@@ -1,13 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+// Define el tipo camera
 typedef struct {
     float x;
     float y;
-} Position;
-
-typedef struct {
-    Position pos;
     float angle;
     float speed;
 } camera;

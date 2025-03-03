@@ -24,6 +24,7 @@ typedef struct {
 void init_raycasting(SDL_Renderer *renderer);
 
 // Function to cast rays and detect wall intersections
+
 void cast_rays(SDL_Renderer *renderer, float player_x, float player_y, float angle, int **map, int map_width, int map_height, Ray *rays, int num_rays);
 
 // Function to draw walls based on raycasting results
