@@ -8,7 +8,7 @@
 void init_rendering(SDL_Renderer **renderer, SDL_Window *window);
 
 // Function to draw walls based on raycasting results
-void draw_walls(SDL_Renderer *renderer, int **map, int map_width, int map_height, float camera_angle);
+void draw_walls(SDL_Renderer *renderer, t_ray *rays, int numRays);
 
 // Function to draw the ground and ceiling
 void draw_ground_ceiling(SDL_Renderer *renderer, int screen_width, int screen_height);
