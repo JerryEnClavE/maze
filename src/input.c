@@ -8,9 +8,6 @@
 #include "../inc/input.h"
 #include "../inc/camera.h"
 
-#include "input.h"
-#include "rendering.h"
-
 
 /**
  * handle_input - Handles user input for camera movement and rotation.
