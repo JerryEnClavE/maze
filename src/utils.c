@@ -4,13 +4,13 @@
 /**
  * allocate_memory - Allocates memory of a given size.
  * @size: The size of memory to allocate.
+ * @element_size: The size of each element.
  *
  * Return: Pointer to the allocated memory, or NULL if allocation fails.
  */
-void *allocate_memory(size_t size, size_t element_size);
-
- {
-    void *ptr = malloc(size);
+void *allocate_memory(size_t size, size_t element_size)
+{
+    void *ptr = malloc(size * element_size);
     if (ptr == NULL)
     {
         // Handle memory allocation failure
