@@ -19,6 +19,11 @@ int load_textures(SDL_Renderer *renderer);
 // Function to free textures
 void free_textures();
 
-typedef Ray t_ray;
+typedef struct {
+    float x;
+    float y;
+    float angle;
+    float distance;
+} Ray;
 
 #endif // RENDERING_H
