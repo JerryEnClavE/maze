@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "map.h"
 #include "player.h"
-#include "textures.h"
 #include "minimap.h"
 
 #ifndef M_PI
