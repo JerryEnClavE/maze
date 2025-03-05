@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = `sdl2-config --cflags` -Wall -Wextra -g
-LDFLAGS = `sdl2-config --libs`
+LDFLAGS =  -lm `sdl2-config --libs`
 
 SRC_DIR = src
 SRC = $(wildcard $(SRC_DIR)/*.c)

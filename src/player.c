@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include <math.h>
 
 #ifndef M_PI
