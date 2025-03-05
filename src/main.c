@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <math.h>
 #include <stdio.h>
 #include "map.h"
@@ -33,72 +32,29 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         float corrected_dist = distance * cos((ray_angle - player->angle) * M_PI / 180);
         int line_height = (TILE_SIZE * SCREEN_HEIGHT) / corrected_dist;
 
-        // Calculate the exact position of the texture on the wall
-        int texture_offset_x = (int)(ray_x) % TILE_SIZE;
-        SDL_Rect src_rect = { texture_offset_x, 0, 1, TILE_SIZE };
-        SDL_Rect dst_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
-
-        // Render ceiling
+        // Render ceiling (color cielo)
+        SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255); // Color cielo
         SDL_Rect ceiling_rect = { i, 0, 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_RenderCopy(renderer, ceiling_texture, NULL, &ceiling_rect);
+        SDL_RenderFillRect(renderer, &ceiling_rect);
 
-        // Render wall with adjusted texture
-        SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
+        // Render wall (color gris)
+        SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255); // Color gris
+        SDL_Rect wall_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
+        SDL_RenderFillRect(renderer, &wall_rect);
 
-        // Render floor
+        // Render floor (color verde)
+        SDL_SetRenderDrawColor(renderer, 34, 139, 34, 255); // Color verde
         SDL_Rect floor_rect = { i, (SCREEN_HEIGHT / 2) + (line_height / 2), 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_RenderCopy(renderer, floor_texture, NULL, &floor_rect);
+        SDL_RenderFillRect(renderer, &floor_rect);
 
         ray_angle += FOV / NUM_RAYS;
     }
 }
-// 
-// void handle_input(const Uint8* keys, Player* player) {
-    // float move_speed = 5.0;
-    // float rotate_speed = 3.0;
-    // float new_x = player->x;
-    // float new_y = player->y;
-// 
-    // if (keys[SDL_SCANCODE_W]) {
-        // new_x += cos(player->angle * M_PI / 180) * move_speed;
-        // new_y += sin(player->angle * M_PI / 180) * move_speed;
-    // }
-    // if (keys[SDL_SCANCODE_S]) {
-        // new_x -= cos(player->angle * M_PI / 180) * move_speed;
-        // new_y -= sin(player->angle * M_PI / 180) * move_speed;
-    // }
-    // if (map[(int)(new_y / TILE_SIZE)][(int)(new_x / TILE_SIZE)] == 0) {
-        // player->x = new_x;
-        // player->y = new_y;
-    // }
-// 
-    // if (keys[SDL_SCANCODE_A]) player->angle -= rotate_speed;
-    // if (keys[SDL_SCANCODE_D]) player->angle += rotate_speed;
-// }
-// 
+
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
-    IMG_Init(IMG_INIT_PNG);
-    SDL_Window* window = SDL_CreateWindow("Raycasting with Textures", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Raycasting with Colors", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    
-    floor_texture = load_texture(renderer, "textures/floor.png");
-    if (!floor_texture) {
-        printf("Failed to load floor texture\n");
-        return 1;
-    }
-
-    ceiling_texture = load_texture(renderer, "textures/ceiling.png");
-    if (!ceiling_texture) {
-        printf("Failed to load ceiling texture\n");
-        return 1;
-    }
-
-    wall_texture = load_texture(renderer, "textures/wall.png");
-    if (!wall_texture) {
-        printf("Failed to load wall texture\n");
-        return 1;
-    }
 
     Player player = {200, 200, 90};
     int running = 1;
@@ -116,9 +72,6 @@ int main() {
         SDL_Delay(16);
     }
 
-    SDL_DestroyTexture(floor_texture);
-    SDL_DestroyTexture(ceiling_texture);
-    SDL_DestroyTexture(wall_texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
