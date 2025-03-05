@@ -1,6 +1,6 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
-#include "textures.h"
+#include "map.h"
 
 SDL_Texture* floor_texture = NULL;
 SDL_Texture* ceiling_texture = NULL;
