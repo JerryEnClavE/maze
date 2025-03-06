@@ -56,29 +56,6 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
     }
 }
 
-void handle_input(const Uint8* keys, Player* player) {
-    float move_speed = 5.0;
-    float rotate_speed = 3.0;
-    float new_x = player->x;
-    float new_y = player->y;
-
-    if (keys[SDL_SCANCODE_W]) {
-        new_x += cos(player->angle * M_PI / 180) * move_speed;
-        new_y += sin(player->angle * M_PI / 180) * move_speed;
-    }
-    if (keys[SDL_SCANCODE_S]) {
-        new_x -= cos(player->angle * M_PI / 180) * move_speed;
-        new_y -= sin(player->angle * M_PI / 180) * move_speed;
-    }
-    if (map[(int)(new_y / TILE_SIZE)][(int)(new_x / TILE_SIZE)] == 0) {
-        player->x = new_x;
-        player->y = new_y;
-    }
-
-    if (keys[SDL_SCANCODE_A]) player->angle -= rotate_speed;
-    if (keys[SDL_SCANCODE_D]) player->angle += rotate_speed;
-}
-
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -96,7 +73,11 @@ int main() {
     SDL_Event event;
 
     while (running) {
-        while (SDL_PollEvent(&event)) if (event.type == SDL_QUIT) running = 0;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = 0;
+            }
+        }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         handle_input(keys, &player);
 
