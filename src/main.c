@@ -77,7 +77,6 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
     }
 }
 
-
 int main() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("Error al inicializar SDL: %s\n", SDL_GetError());
