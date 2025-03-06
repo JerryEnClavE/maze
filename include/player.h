@@ -9,5 +9,6 @@ typedef struct {
 } Player;
 
 void handle_input(const Uint8* keys, Player* player);
+void handle_mouse_movement(int mouse_x, int mouse_y, Player* player);
 
 #endif // PLAYER_H
