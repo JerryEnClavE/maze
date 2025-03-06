@@ -75,7 +75,8 @@ int main() {
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                running = 0;
+                // Ignorar el evento SDL_QUIT para que el juego no se cierre
+                continue;
             }
         }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
