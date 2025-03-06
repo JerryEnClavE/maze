@@ -18,13 +18,6 @@
 
 SDL_Texture* wall_texture = NULL;
 
-void handle_mouse_movement(int mouse_x, int mouse_y, Player* player) {
-    // Implementación de la función
-    (void)mouse_x; // Para evitar advertencias de parámetros no utilizados
-    (void)mouse_y;
-    (void)player;
-}
-
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     float ray_angle = player->angle - (FOV / 2);
     for (int i = 0; i < NUM_RAYS; i++) {
