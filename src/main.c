@@ -104,13 +104,11 @@ int main() {
     int running = 1;
     SDL_Event event;
 
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                // Ignorar el evento SDL_QUIT para que el juego no se cierre
-                running;
-            }
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            running = 0;  // Salir del bucle principal
         }
+    }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         handle_input(keys, &player);
 
