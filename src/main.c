@@ -68,12 +68,14 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
 }
 
 int main() {
+    
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
         return 1;
     }
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        SDL_Quit();
         return 1;
     }
 
@@ -106,7 +108,7 @@ int main() {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 // Ignorar el evento SDL_QUIT para que el juego no se cierre
-                continue;
+                running;
             }
         }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
