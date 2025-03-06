@@ -103,13 +103,13 @@ int main() {
     }
 
     Player player = {200, 200, 90};
+    int running = 1;
     SDL_Event event;
 
-    while (1) {  // Bucle infinito
+    while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                // Ignorar el evento SDL_QUIT para que el juego no se cierre
-                continue;
+                running = 0;  // Salir del bucle principal
             }
         }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
@@ -122,7 +122,6 @@ int main() {
         SDL_Delay(16);
     }
 
-    // Nunca se alcanzará este código debido al bucle infinito
     SDL_DestroyTexture(wall_texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
