@@ -1,11 +1,11 @@
+#include "../inc/player.h"
 #include <SDL2/SDL.h>
 #include <math.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-#include "player.h"
-#include "map.h"
+#include "../inc/map.h"
 
 void handle_input(const Uint8* keys, Player* player) {
     float move_speed = 5.0;

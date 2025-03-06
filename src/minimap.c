@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
-#include "map.h"
-#include "player.h"
-#include "minimap.h"
+#include "../inc/map.h"
+#include "../inc/player.h"
+#include "../inc/minimap.h"
 
 #define MINIMAP_SCALE 0.2
 

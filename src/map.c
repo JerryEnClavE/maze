@@ -1,4 +1,5 @@
-#include "map.h"
+#include "../inc/map.h"
+
 
 int map[MAP_HEIGHT][MAP_WIDTH] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},

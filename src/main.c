@@ -2,10 +2,10 @@
 #include <SDL2/SDL_image.h>
 #include <math.h>
 #include <stdio.h>
-#include "map.h"
-#include "player.h"
-#include "textures.h"
-#include "minimap.h"
+#include "../inc/map.h"
+#include "../inc/player.h"
+#include "../inc/textures.h"
+#include "../inc/minimap.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -15,6 +15,10 @@
 #define SCREEN_HEIGHT 600
 #define FOV 60.0
 #define NUM_RAYS SCREEN_WIDTH
+
+SDL_Texture* floor_texture = NULL;
+SDL_Texture* ceiling_texture = NULL;
+SDL_Texture* wall_texture = NULL;
 
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     float ray_angle = player->angle - (FOV / 2);
@@ -41,14 +45,16 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
 
         // Render ceiling
         SDL_Rect ceiling_rect = { i, 0, 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_RenderCopy(renderer, ceiling_texture, NULL, &ceiling_rect);
+        SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255); // Color clear
+        SDL_RenderFillRect(renderer, &ceiling_rect);
 
         // Render wall with adjusted texture
         SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
 
         // Render floor
         SDL_Rect floor_rect = { i, (SCREEN_HEIGHT / 2) + (line_height / 2), 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_RenderCopy(renderer, floor_texture, NULL, &floor_rect);
+        SDL_SetRenderDrawColor(renderer, 139, 69, 19, 255); // Color marron
+        SDL_RenderFillRect(renderer, &floor_rect);
 
         ray_angle += FOV / NUM_RAYS;
     }
@@ -83,18 +89,6 @@ int main() {
     SDL_Window* window = SDL_CreateWindow("Raycasting with Textures", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
-    floor_texture = load_texture(renderer, "textures/floor.png");
-    if (!floor_texture) {
-        printf("Failed to load floor texture\n");
-        return 1;
-    }
-
-    ceiling_texture = load_texture(renderer, "textures/ceiling.png");
-    if (!ceiling_texture) {
-        printf("Failed to load ceiling texture\n");
-        return 1;
-    }
-
     wall_texture = load_texture(renderer, "textures/wall.png");
     if (!wall_texture) {
         printf("Failed to load wall texture\n");
@@ -117,8 +111,6 @@ int main() {
         SDL_Delay(16);
     }
 
-    SDL_DestroyTexture(floor_texture);
-    SDL_DestroyTexture(ceiling_texture);
     SDL_DestroyTexture(wall_texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
