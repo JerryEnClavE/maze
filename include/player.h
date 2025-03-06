@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <SDL2/SDL.h> // Incluye el encabezado de SDL
+
 typedef struct {
     float x, y;
     float angle;

@@ -1,4 +1,5 @@
 #include <math.h>
+#include <SDL2/SDL.h> // Incluye el encabezado de SDL
 #include "../include/player.h"
 #include "../include/map.h"
 #include "../include/constants.h" // Incluye el archivo de constantes
