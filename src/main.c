@@ -1,15 +1,15 @@
-#ifndef TEXTURES_H.h>
-#define TEXTURES_H_image.h>
 #include <math.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <stdio.h>
 #include "../inc/map.h"
-extern SDL_Texture* floor_texture;
-extern SDL_Texture* ceiling_texture;
-extern SDL_Texture* wall_texture;
+#include "../inc/player.h"
+#include "../inc/textures.h"
+#include "../inc/minimap.h"
 
-SDL_Texture* load_texture(SDL_Renderer* renderer, const char* path);
+#ifndef M_PI
 #define M_PI 3.14159265358979323846
-#endif // TEXTURES_H
+#endif
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
