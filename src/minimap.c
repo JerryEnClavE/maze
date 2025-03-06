@@ -2,6 +2,7 @@
 #include "../include/map.h"
 #include "../include/player.h"
 #include "../include/minimap.h"
+#include "../include/constants.h"
 
 #define MINIMAP_SCALE 0.2
 

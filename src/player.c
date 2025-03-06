@@ -1,8 +1,7 @@
 #include <math.h>
 #include "../include/player.h"
 #include "../include/map.h"
-#include "../include/constants.h" // Incluye el archivo de constantes
-#include "player.h"
+#include "../include/constants.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
