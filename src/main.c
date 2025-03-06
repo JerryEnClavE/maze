@@ -26,13 +26,15 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         float ray_dx = cos(ray_angle * M_PI / 180);
         float ray_dy = sin(ray_angle * M_PI / 180);
 
-        while (map[(int)(ray_y / TILE_SIZE)][(int)(ray_x / TILE_SIZE)] == 0) {
+        // Verifica que los índices estén dentro de los límites del mapa
+        while (ray_x >= 0 && ray_x < MAP_WIDTH * TILE_SIZE && ray_y >= 0 && ray_y < MAP_HEIGHT * TILE_SIZE &&
+               map[(int)(ray_y / TILE_SIZE)][(int)(ray_x / TILE_SIZE)] == 0) {
             ray_x += ray_dx * 2;
             ray_y += ray_dy * 2;
         }
 
         float distance = sqrt((ray_x - player->x) * (ray_x - player->x) +
-                         (ray_y - player->y) * (ray_y - player->y));
+                              (ray_y - player->y) * (ray_y - player->y));
         float corrected_dist = distance * cos((ray_angle - player->angle) * M_PI / 180);
         int line_height = (int)((TILE_SIZE * SCREEN_HEIGHT) / corrected_dist);
 
