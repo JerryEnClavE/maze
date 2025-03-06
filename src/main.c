@@ -1,24 +1,20 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#ifndef TEXTURES_H.h>
+#define TEXTURES_H_image.h>
 #include <math.h>
-#include <stdio.h>
+#include <SDL2/SDL.h>
 #include "../inc/map.h"
-#include "../inc/player.h"
-#include "../inc/textures.h"
-#include "../inc/minimap.h"
+extern SDL_Texture* floor_texture;
+extern SDL_Texture* ceiling_texture;
+extern SDL_Texture* wall_texture;
 
-#ifndef M_PI
+SDL_Texture* load_texture(SDL_Renderer* renderer, const char* path);
 #define M_PI 3.14159265358979323846
-#endif
+#endif // TEXTURES_H
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define FOV 60.0
 #define NUM_RAYS SCREEN_WIDTH
-
-SDL_Texture* floor_texture = NULL;
-SDL_Texture* ceiling_texture = NULL;
-SDL_Texture* wall_texture = NULL;
 
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     float ray_angle = player->angle - (FOV / 2);
