@@ -1,12 +1,11 @@
-#include <math.h>
 #include <SDL2/SDL.h>
-#include "../include/player.h"
-#include "../include/map.h"
-#include "../include/constants.h"
+#include <math.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+#include "player.h"
+#include "map.h"
 
 void handle_input(const Uint8* keys, Player* player) {
     float move_speed = 5.0;
@@ -22,20 +21,11 @@ void handle_input(const Uint8* keys, Player* player) {
         new_x -= cos(player->angle * M_PI / 180) * move_speed;
         new_y -= sin(player->angle * M_PI / 180) * move_speed;
     }
-    if (new_y >= 0 && new_y < MAP_HEIGHT * TILE_SIZE && new_x >= 0 && new_x < MAP_WIDTH * TILE_SIZE &&
-        map[(int)(new_y / TILE_SIZE)][(int)(new_x / TILE_SIZE)] == 0) {
+    if (map[(int)(new_y / TILE_SIZE)][(int)(new_x / TILE_SIZE)] == 0) {
         player->x = new_x;
         player->y = new_y;
     }
 
     if (keys[SDL_SCANCODE_A]) player->angle -= rotate_speed;
     if (keys[SDL_SCANCODE_D]) player->angle += rotate_speed;
-}
-
-void handle_mouse_movement(int mouse_x, int mouse_y, Player *player)
-{
-    // Implementación de la función
-    (void)mouse_x; // Para evitar advertencias de parámetros no utilizados
-    (void)mouse_y;
-    (void)player;
 }
