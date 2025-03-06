@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define SCREEN_HEIGHT 600
-#define SCREEN_WIDTH 800
+#define MAP_HEIGHT 10
+#define MAP_WIDTH 10
 
 #endif // CONSTANTS_H

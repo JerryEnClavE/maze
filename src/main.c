@@ -18,6 +18,12 @@
 
 SDL_Texture* wall_texture = NULL;
 
+void handle_mouse_movement(int mouse_x, int mouse_y, Player* player) {
+    // Implementación de la función
+    (void)mouse_x; // Para evitar advertencias de parámetros no utilizados
+    (void)mouse_y;
+    (void)player;
+}
 
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     float ray_angle = player->angle - (FOV / 2);
@@ -119,7 +125,7 @@ int main() {
             if (event.type == SDL_QUIT) {
                 running = 0;
             } else if (event.type == SDL_MOUSEMOTION) {
-            handle_mouse_movement(event.motion.x, event.motion.y, &player, SCREEN_WIDTH, SCREEN_HEIGHT);  
+                handle_mouse_movement(event.motion.x, event.motion.y, &player);
                 // Opcional: Mover el ratón de vuelta al centro de la pantalla
                 SDL_WarpMouseInWindow(window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
             }

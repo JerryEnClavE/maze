@@ -2,6 +2,7 @@
 #include "../include/player.h"
 #include "../include/map.h"
 #include "../include/constants.h" // Incluye el archivo de constantes
+#include "player.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -30,13 +31,10 @@ void handle_input(const Uint8* keys, Player* player) {
     if (keys[SDL_SCANCODE_D]) player->angle += rotate_speed;
 }
 
-void handle_mouse_movement(int mouse_x, int mouse_y, Player* player, int screen_width, int screen_height) {
-    int center_x = screen_width / 2;
-    int center_y = screen_height / 2;
-    float sensitivity = 0.1f;
-
-    int delta_x = mouse_x - center_x;
-    player->angle += delta_x * sensitivity;
-
-    // Opcional: Mover el ratón de vuelta al centro de la pantalla
-    // SDL_WarpMouseInWindow(window, center_x, center_y);
+void handle_mouse_movement(int mouse_x, int mouse_y, Player *player)
+{
+    // Implementación de la función
+    (void)mouse_x; // Para evitar advertencias de parámetros no utilizados
+    (void)mouse_y;
+    (void)player;
+}

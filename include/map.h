@@ -3,6 +3,8 @@
 
 #define TILE_SIZE 64
 
-extern int map[MAP_HEIGHT][MAP_WIDTH];
+extern int **map;
 
-#endif // MAP_H
+char **load_map(const char *filename);
+
+#endif
