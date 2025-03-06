@@ -16,7 +16,14 @@
 #define FOV 60.0
 #define NUM_RAYS SCREEN_WIDTH
 
+SDL_Texture* wall_texture = NULL;
+
 void cast_rays(SDL_Renderer* renderer, Player* player) {
+    if (!renderer || !player) {
+        printf("Renderer or player is NULL\n");
+        return;
+    }
+
     float ray_angle = player->angle - (FOV / 2);
     for (int i = 0; i < NUM_RAYS; i++) {
         float ray_x = player->x;
@@ -45,7 +52,11 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         SDL_RenderFillRect(renderer, &ceiling_rect);
 
         // Render wall with adjusted texture
-        SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
+        if (wall_texture) {
+            SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
+        } else {
+            printf("Wall texture is NULL\n");
+        }
 
         // Render floor
         SDL_Rect floor_rect = { i, (SCREEN_HEIGHT / 2) + (line_height / 2), 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
@@ -57,14 +68,33 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
 }
 
 int main() {
-    SDL_Init(SDL_INIT_VIDEO);
-    IMG_Init(IMG_INIT_PNG);
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        return 1;
+    }
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        return 1;
+    }
+
     SDL_Window* window = SDL_CreateWindow("Raycasting with Textures", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (!window) {
+        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        return 1;
+    }
+
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!renderer) {
+        printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        return 1;
+    }
     
     wall_texture = load_texture(renderer, "textures/wall.png");
     if (!wall_texture) {
         printf("Failed to load wall texture\n");
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
         return 1;
     }
 
