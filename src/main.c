@@ -6,6 +6,7 @@
 #include "../inc/player.h"
 #include "../inc/textures.h"
 #include "../inc/minimap.h"
+#include "../inc/enemy.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -15,6 +16,8 @@
 #define SCREEN_HEIGHT 600
 #define FOV 60.0
 #define NUM_RAYS SCREEN_WIDTH
+#define TILE_SIZE 64
+#define MAX_ENEMIES 10
 
 SDL_Texture* wall_texture = NULL;
 
@@ -102,26 +105,51 @@ int main() {
         return 1;
     }
 
+    SDL_Texture* enemy_texture = load_texture(renderer, "textures/enemy.png");
+    if (!enemy_texture) {
+        printf("Failed to load enemy texture\n");
+        SDL_DestroyTexture(wall_texture);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
     Player player = {200, 200, 90};
+    int num_enemies = MAX_ENEMIES;
+    Enemy enemies[MAX_ENEMIES];
+
+    for (int i = 0; i < num_enemies; i++) {
+        init_enemy(&enemies[i], 100.0f, 100.0f, 0.0f, enemy_texture); // Example initial positions and angle
+    }
+
     int running = 1;
     SDL_Event event;
 
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                running = 0;  // Salir del bucle principal
+                running = 0;
             }
         }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         handle_input(keys, &player);
 
+        for (int i = 0; i < num_enemies; i++) {
+            update_enemy(&enemies[i], &player);
+        }
+
         SDL_RenderClear(renderer);
         cast_rays(renderer, &player);
-        draw_minimap(renderer, &player);
+        draw_minimap(renderer, &player, enemies, num_enemies);  // Pasamos los enemigos aquí
+        for (int i = 0; i < num_enemies; i++) {
+            render_enemy(renderer, &enemies[i]);
+        }
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
 
+    SDL_DestroyTexture(enemy_texture);
     SDL_DestroyTexture(wall_texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
