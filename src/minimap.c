@@ -1,12 +1,9 @@
 #include <SDL2/SDL.h>
-#include "../inc/map.h"
-#include "../inc/player.h"
 #include "../inc/minimap.h"
-#include "../inc/enemy.h"
+#include "../inc/player.h"
+#include "../inc/map.h"  // Asegúrate de que este archivo define MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, MINIMAP_SCALE, y map
 
-#define MINIMAP_SCALE 0.2
-
-void draw_minimap(SDL_Renderer* renderer, Player* player, Enemy* enemies, int num_enemies) {
+void draw_minimap(SDL_Renderer* renderer, Player* player) { 
     // Dibujar el mapa
     for (int y = 0; y < MAP_HEIGHT; y++) {
         for (int x = 0; x < MAP_WIDTH; x++) {
@@ -34,16 +31,4 @@ void draw_minimap(SDL_Renderer* renderer, Player* player, Enemy* enemies, int nu
     };
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Verde para el jugador
     SDL_RenderFillRect(renderer, &player_rect);
-
-    // Dibujar a los enemigos en el minimapa (puntos rojos)
-    for (int i = 0; i < num_enemies; i++) {
-        SDL_Rect enemy_rect = {
-            (int)(enemies[i].x * MINIMAP_SCALE) - 2,
-            (int)(enemies[i].y * MINIMAP_SCALE) - 2,
-            4,
-            4
-        };
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Rojo para los enemigos
-        SDL_RenderFillRect(renderer, &enemy_rect);
-    }
 }
