@@ -18,6 +18,7 @@
 #define TILE_SIZE 64
 
 SDL_Texture* wall_texture = NULL;
+SDL_Texture* floor_texture = NULL;  // Añadir esta línea
 
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     if (!renderer || !player) {
@@ -119,6 +120,16 @@ int main() {
         return 1;
     }
 
+    floor_texture = load_texture(renderer, "textures/floor.png");  // Añadir esta línea
+    if (!floor_texture) {
+        printf("Failed to load floor texture\n");
+        SDL_DestroyTexture(wall_texture);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
     Player player = {200, 200, 90};
 
     int running = 1;
@@ -141,6 +152,7 @@ int main() {
     }
 
     SDL_DestroyTexture(wall_texture);
+    SDL_DestroyTexture(floor_texture);  // Añadir esta línea
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
