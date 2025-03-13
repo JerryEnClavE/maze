@@ -85,6 +85,11 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
     }
 }
 
+void handle_mouse_motion(SDL_MouseMotionEvent* motion, Player* player) {
+    float sensitivity = 0.1f;
+    player->angle += motion->xrel * sensitivity;
+}
+
 int main() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -135,10 +140,14 @@ int main() {
     int running = 1;
     SDL_Event event;
 
+    SDL_SetRelativeMouseMode(SDL_TRUE); // Captura el ratón
+
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = 0;
+            } else if (event.type == SDL_MOUSEMOTION) {
+                handle_mouse_motion(&event.motion, &player);
             }
         }
         const Uint8* keys = SDL_GetKeyboardState(NULL);
