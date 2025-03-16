@@ -16,9 +16,16 @@
 #define FOV 60.0
 #define NUM_RAYS SCREEN_WIDTH
 #define TILE_SIZE 64
+#define texWidth 64
+#define texHeight 64
 
 SDL_Texture* wall_texture = NULL;
-SDL_Texture* floor_texture = NULL;  // Añadir esta línea
+
+void render_floor(SDL_Renderer* renderer) {
+    SDL_Rect floor_rect = { 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+    SDL_SetRenderDrawColor(renderer, 0, 100, 0, 255); // Color verde oscuro
+    SDL_RenderFillRect(renderer, &floor_rect);
+}
 
 void cast_rays(SDL_Renderer* renderer, Player* player) {
     if (!renderer || !player) {
@@ -39,13 +46,13 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
             if (map[(int)(ray_y / TILE_SIZE)][(int)(ray_x / TILE_SIZE)] == 1) {
                 hit = 1;
                 if (fabs(ray_dx) > fabs(ray_dy)) {
-                    side = 0; // Hit vertical wall
+                    side = 0;
                 } else {
-                    side = 1; // Hit horizontal wall
+                    side = 1;
                 }
             } else {
-                ray_x += ray_dx * 2;
-                ray_y += ray_dy * 2;
+                ray_x += ray_dx * 0.1; // Reducir el tamaño del paso para mejorar la precisión
+                ray_y += ray_dy * 0.1; // Reducir el tamaño del paso para mejorar la precisión
             }
         }
 
@@ -54,32 +61,27 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         float corrected_dist = distance * cos((ray_angle - player->angle) * M_PI / 180);
         int line_height = (TILE_SIZE * SCREEN_HEIGHT) / corrected_dist;
 
-        // Calculate the exact position of the texture on the wall
         int texture_offset_x;
         if (side == 0) {
-            texture_offset_x = (int)(ray_y) % TILE_SIZE;
+            texture_offset_x = (int)fabs(ray_y) % TILE_SIZE;
         } else {
-            texture_offset_x = (int)(ray_x) % TILE_SIZE;
+            texture_offset_x = (int)fabs(ray_x) % TILE_SIZE;
         }
+        if (texture_offset_x < 0) texture_offset_x = 0;
+        if (texture_offset_x >= TILE_SIZE) texture_offset_x = TILE_SIZE - 1;
+
         SDL_Rect src_rect = { texture_offset_x, 0, 1, TILE_SIZE };
         SDL_Rect dst_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
 
-        // Render ceiling
         SDL_Rect ceiling_rect = { i, 0, 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255); // Color clear
+        SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
         SDL_RenderFillRect(renderer, &ceiling_rect);
 
-        // Render wall with adjusted texture
         if (wall_texture) {
             SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
         } else {
             printf("Wall texture is NULL\n");
         }
-
-        // Render floor
-        SDL_Rect floor_rect = { i, (SCREEN_HEIGHT / 2) + (line_height / 2), 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_SetRenderDrawColor(renderer, 139, 69, 19, 255); // Color marron
-        SDL_RenderFillRect(renderer, &floor_rect);
 
         ray_angle += FOV / NUM_RAYS;
     }
@@ -125,22 +127,10 @@ int main() {
         return 1;
     }
 
-    floor_texture = load_texture(renderer, "textures/floor.png");  // Añadir esta línea
-    if (!floor_texture) {
-        printf("Failed to load floor texture\n");
-        SDL_DestroyTexture(wall_texture);
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
-
     Player player = {200, 200, 90};
-
     int running = 1;
     SDL_Event event;
-
-    SDL_SetRelativeMouseMode(SDL_TRUE); // Captura el ratón
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -154,14 +144,14 @@ int main() {
         handle_input(keys, &player);
 
         SDL_RenderClear(renderer);
+        render_floor(renderer);
         cast_rays(renderer, &player);
-        draw_minimap(renderer, &player);  // Eliminamos los parámetros relacionados con los enemigos
+        draw_minimap(renderer, &player);
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
 
     SDL_DestroyTexture(wall_texture);
-    SDL_DestroyTexture(floor_texture);  // Añadir esta línea
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
