@@ -33,56 +33,124 @@ void cast_rays(SDL_Renderer* renderer, Player* player) {
         return;
     }
 
+    // Render ceiling (sky)
+    SDL_Rect ceiling_rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+    SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
+    SDL_RenderFillRect(renderer, &ceiling_rect);
+
     float ray_angle = player->angle - (FOV / 2);
     for (int i = 0; i < NUM_RAYS; i++) {
+        // Normalize angle
+        while (ray_angle >= 360.0f) ray_angle -= 360.0f;
+        while (ray_angle < 0.0f) ray_angle += 360.0f;
+
         float ray_x = player->x;
         float ray_y = player->y;
         float ray_dx = cos(ray_angle * M_PI / 180);
         float ray_dy = sin(ray_angle * M_PI / 180);
         
+        // Variables for DDA algorithm
+        int mapX = (int)(ray_x / TILE_SIZE);
+        int mapY = (int)(ray_y / TILE_SIZE);
+        
+        // Length of ray from current position to next x or y-side
+        float sideDistX, sideDistY;
+        
+        // Length of ray from one x or y-side to next x or y-side
+        float deltaDistX = (ray_dx == 0) ? 1e30 : fabs(1 / ray_dx);
+        float deltaDistY = (ray_dy == 0) ? 1e30 : fabs(1 / ray_dy);
+        
+        // What direction to step in x or y direction (either +1 or -1)
+        int stepX, stepY;
+        
+        // Calculate step and initial sideDist
+        if (ray_dx < 0) {
+            stepX = -1;
+            sideDistX = (ray_x / TILE_SIZE - mapX) * deltaDistX;
+        } else {
+            stepX = 1;
+            sideDistX = (mapX + 1.0 - ray_x / TILE_SIZE) * deltaDistX;
+        }
+        
+        if (ray_dy < 0) {
+            stepY = -1;
+            sideDistY = (ray_y / TILE_SIZE - mapY) * deltaDistY;
+        } else {
+            stepY = 1;
+            sideDistY = (mapY + 1.0 - ray_y / TILE_SIZE) * deltaDistY;
+        }
+        
+        // Perform DDA
         int hit = 0;
-        int side = 0;
+        int side = 0; // 0 for NS wall, 1 for EW wall
+        
         while (!hit) {
-            if (map[(int)(ray_y / TILE_SIZE)][(int)(ray_x / TILE_SIZE)] == 1) {
-                hit = 1;
-                if (fabs(ray_dx) > fabs(ray_dy)) {
-                    side = 0;
-                } else {
-                    side = 1;
-                }
+            // Jump to next map square
+            if (sideDistX < sideDistY) {
+                sideDistX += deltaDistX;
+                mapX += stepX;
+                side = 0;
             } else {
-                ray_x += ray_dx * 0.1; // Reducir el tamaño del paso para mejorar la precisión
-                ray_y += ray_dy * 0.1; // Reducir el tamaño del paso para mejorar la precisión
+                sideDistY += deltaDistY;
+                mapY += stepY;
+                side = 1;
+            }
+            
+            // Check if ray has hit a wall
+            if (mapY >= 0 && mapX >= 0 && mapY < MAP_HEIGHT && mapX < MAP_WIDTH) {
+                if (map[mapY][mapX] == 1) hit = 1;
+            } else {
+                break; // Ray is out of bounds
             }
         }
-
-        float distance = sqrt((ray_x - player->x) * (ray_x - player->x) +
-                              (ray_y - player->y) * (ray_y - player->y));
-        float corrected_dist = distance * cos((ray_angle - player->angle) * M_PI / 180);
-        int line_height = (TILE_SIZE * SCREEN_HEIGHT) / corrected_dist;
-
-        int texture_offset_x;
-        if (side == 0) {
-            texture_offset_x = (int)fabs(ray_y) % TILE_SIZE;
-        } else {
-            texture_offset_x = (int)fabs(ray_x) % TILE_SIZE;
+        
+        if (!hit) {
+            ray_angle += FOV / NUM_RAYS;
+            continue; // Skip if no wall was hit
         }
-        if (texture_offset_x < 0) texture_offset_x = 0;
-        if (texture_offset_x >= TILE_SIZE) texture_offset_x = TILE_SIZE - 1;
-
-        SDL_Rect src_rect = { texture_offset_x, 0, 1, TILE_SIZE };
-        SDL_Rect dst_rect = { i, (SCREEN_HEIGHT / 2) - (line_height / 2), 1, line_height };
-
-        SDL_Rect ceiling_rect = { i, 0, 1, (SCREEN_HEIGHT / 2) - (line_height / 2) };
-        SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
-        SDL_RenderFillRect(renderer, &ceiling_rect);
-
+        
+        // Calculate distance projected on camera direction
+        float perpWallDist;
+        if (side == 0) {
+            perpWallDist = (mapX - ray_x / TILE_SIZE + (1 - stepX) / 2) / ray_dx;
+        } else {
+            perpWallDist = (mapY - ray_y / TILE_SIZE + (1 - stepY) / 2) / ray_dy;
+        }
+        perpWallDist *= TILE_SIZE;
+        
+        // Calculate height of line to draw on screen
+        int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist * TILE_SIZE);
+        
+        // Calculate where exactly the wall was hit
+        float wallX;
+        if (side == 0) {
+            wallX = ray_y + perpWallDist * ray_dy / TILE_SIZE;
+        } else {
+            wallX = ray_x + perpWallDist * ray_dx / TILE_SIZE;
+        }
+        wallX -= floor(wallX);
+        
+        // X coordinate on the texture
+        int texX = (int)(wallX * texWidth);
+        if ((side == 0 && ray_dx > 0) || (side == 1 && ray_dy < 0)) {
+            texX = texWidth - texX - 1;
+        }
+        
+        // Draw the textured vertical line
+        int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
+        if (drawStart < 0) drawStart = 0;
+        int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
+        if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
+        
+        SDL_Rect src_rect = { texX, 0, 1, texHeight };
+        SDL_Rect dst_rect = { i, drawStart, 1, drawEnd - drawStart };
+        
         if (wall_texture) {
             SDL_RenderCopy(renderer, wall_texture, &src_rect, &dst_rect);
         } else {
             printf("Wall texture is NULL\n");
         }
-
+        
         ray_angle += FOV / NUM_RAYS;
     }
 }

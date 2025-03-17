@@ -1,7 +1,12 @@
+#include <math.h>
 #include <SDL2/SDL.h>
-#include "../inc/minimap.h"
+#include <SDL2/SDL_image.h>
+#include <stdio.h>
+#include "../inc/map.h"
 #include "../inc/player.h"
-#include "../inc/map.h"  // Asegúrate de que este archivo define MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, MINIMAP_SCALE, y map
+#include "../inc/textures.h"
+#include "../inc/minimap.h"
+#include "../inc/config.h"  // Include the new config header file
 
 void draw_minimap(SDL_Renderer* renderer, Player* player) { 
     // Dibujar el mapa
@@ -31,4 +36,33 @@ void draw_minimap(SDL_Renderer* renderer, Player* player) {
     };
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Verde para el jugador
     SDL_RenderFillRect(renderer, &player_rect);
+
+    // Dibujar los rayos de visión en el minimapa
+    float ray_angle = player->angle - (FOV / 2);
+    for (int i = 0; i < NUM_RAYS; i++) {
+        float ray_x = player->x;
+        float ray_y = player->y;
+        float ray_dx = cos(ray_angle * M_PI / 180);
+        float ray_dy = sin(ray_angle * M_PI / 180);
+        
+        int hit = 0;
+        while (!hit) {
+            if (map[(int)(ray_y / TILE_SIZE)][(int)(ray_x / TILE_SIZE)] == 1) {
+                hit = 1;
+            } else {
+                ray_x += ray_dx * 0.5; // Aumentar el tamaño del paso para extender la distancia de visualización
+                ray_y += ray_dy * 0.5; // Aumentar el tamaño del paso para extender la distancia de visualización
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Rojo para los rayos
+        SDL_RenderDrawLine(renderer,
+            (int)(player->x * MINIMAP_SCALE),
+            (int)(player->y * MINIMAP_SCALE),
+            (int)(ray_x * MINIMAP_SCALE),
+            (int)(ray_y * MINIMAP_SCALE)
+        );
+
+        ray_angle += FOV / NUM_RAYS;
+    }
 }
